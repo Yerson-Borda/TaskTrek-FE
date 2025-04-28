@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -56,4 +58,31 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.adapter.rxjava2)
+    implementation (libs.converter.gson)
+
+    // okhttp
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
+
+    // Koin for di
+    implementation (libs.koin.androidx.compose)
+    implementation (libs.koin.androidx.compose.navigation)
+
+    // Coroutines for asynchronous calls (and Deferred adapter)
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
+
+    // lifecycle
+    implementation (libs.androidx.lifecycle.extensions)
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+    implementation (libs.androidx.lifecycle.runtime.ktx.v220)
+
+    //recyclerview and cardview
+    implementation (libs.androidx.recyclerview)
+    implementation (libs.androidx.cardview)
 }
