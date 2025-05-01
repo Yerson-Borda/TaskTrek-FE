@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.tasktrek"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -85,4 +85,9 @@ dependencies {
     //recyclerview and cardview
     implementation (libs.androidx.recyclerview)
     implementation (libs.androidx.cardview)
+
+    //Google OAuth
+    implementation (libs.androidx.credentials)
+    implementation (libs.androidx.credentials.play.services.auth)
+    implementation (libs.googleid)
 }

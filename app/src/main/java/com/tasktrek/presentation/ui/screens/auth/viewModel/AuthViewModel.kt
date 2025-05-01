@@ -1,4 +1,4 @@
-package com.tasktrek.presentation.screen.auth
+package com.tasktrek.presentation.ui.screens.auth.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
