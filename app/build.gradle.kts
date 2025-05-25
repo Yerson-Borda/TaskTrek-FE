@@ -1,18 +1,12 @@
 import org.gradle.kotlin.dsl.implementation
-import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.0.21"
 }
-
-//val localProperties = Properties().apply {
-//    load(FileInputStream(rootProject.file("local.properties")))
-//}
-//
-//val googleClientId = localProperties["GOOGLE_SERVER_CLIENT_ID"] as String
 
 android {
     namespace = "com.tasktrek"
@@ -27,7 +21,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-//        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", "\"$googleClientId\"")
+        val properties =  Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        buildConfigField ("String", "GOOGLE_SERVER_CLIENT_ID", "\"${properties.getProperty("GOOGLE_SERVER_CLIENT_ID")}\"")
     }
 
     buildTypes {
@@ -47,8 +44,8 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-//        buildConfig = true
         compose = true
+        buildConfig = true
     }
 }
 
@@ -102,6 +99,7 @@ dependencies {
     implementation (libs.androidx.credentials.play.services.auth)
     implementation (libs.googleid)
 
-    // env
-    implementation(libs.dotenv.kotlin)
+    // Navigation compose
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 }

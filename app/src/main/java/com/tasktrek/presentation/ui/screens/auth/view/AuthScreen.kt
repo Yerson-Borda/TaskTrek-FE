@@ -18,29 +18,37 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.tasktrek.BuildConfig
 import com.tasktrek.presentation.ui.components.GoogleSignInButton
 import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthState
 import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 import com.tasktrek.R
-import io.github.cdimascio.dotenv.dotenv
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel,
-    onRegistrationSuccess: () -> Unit = {},
-    onGoogleSignIn: () -> Unit = {}
+    onRegistrationSuccess: () -> Unit,
+    onLoginSuccess: () -> Unit,
+    onGoogleSignIn: () -> Unit
 ) {
+    val viewModel: AuthViewModel = koinViewModel()
     val authState by viewModel.authState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(authState) {
-        if (authState is AuthState.RegistrationSuccess) {
-            onRegistrationSuccess()
-            viewModel.resetInputs()
-            viewModel.isLoginMode = true
+        when (authState) {
+            is AuthState.RegistrationSuccess -> {
+                onRegistrationSuccess()
+                viewModel.resetInputs()
+                viewModel.isLoginMode = true
+            }
+            is AuthState.Success -> {
+                onLoginSuccess()
+            }
+            else -> {}
         }
     }
 
@@ -83,7 +91,7 @@ fun AuthScreen(
             GoogleSignInButton(onClick = {
                 val googleIdOption = GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(dotenv()["GOOGLE_SERVER_CLIENT_ID"])
+                    .setServerClientId(BuildConfig.GOOGLE_SERVER_CLIENT_ID)
                     .setAutoSelectEnabled(true)
                     .build()
 
