@@ -3,6 +3,8 @@ adapterRxjava2 = "2.7.1"
 agp = "8.9.2"
 cardview = "1.0.0"
 credentials = "1.5.0"
+dotenvKotlin = "6.4.1"
+dotenvKotlinVersion = "6.4.1"
 googleid = "1.5.0"
 koinAndroidxCompose = "4.0.3"
 koinAndroidxComposeNavigation = "4.0.3"
@@ -37,6 +39,7 @@ androidx-lifecycle-runtime-ktx-v220 = { module = "androidx.lifecycle:lifecycle-r
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleExtensions" }
 androidx-recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "adapterRxjava2" }
+dotenv-kotlin = { module = "io.github.cdimascio:dotenv-kotlin", version.ref = "dotenvKotlinVersion" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version = "1.1.0" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

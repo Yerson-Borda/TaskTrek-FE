@@ -2,29 +2,34 @@ package com.tasktrek.data.repository
 
 import com.tasktrek.data.model.request.auth.LoginRequest
 import com.tasktrek.data.model.request.auth.RegisterRequest
-import com.tasktrek.data.model.response.auth.AuthResponse
-import com.tasktrek.data.model.response.auth.RegistrationResponse
+import com.tasktrek.domain.model.AuthResult
+import com.tasktrek.domain.model.LoginDomainModel
+import com.tasktrek.domain.model.RegisterDomainModel
+import com.tasktrek.domain.model.RegistrationResult
 import com.tasktrek.domain.repository.AuthRepository
 import com.tasktrek.network.AuthApiService
 
 class AuthRepositoryImpl(
     private val authApiService: AuthApiService
 ) : AuthRepository {
-    override suspend fun register(registerRequest: RegisterRequest): RegistrationResponse {
-        val response = authApiService.register(registerRequest)
-        if (!response.isSuccessful) {
+    override suspend fun register(register: RegisterDomainModel): RegistrationResult {
+        val request = RegisterRequest(register.username, register.email, register.password)
+        val response = authApiService.register(request)
+        return if (response.isSuccessful) {
+            RegistrationResult(true, "Registration successful")
+        } else {
             val errorBody = response.errorBody()?.string() ?: "Unknown error"
-            return RegistrationResponse(false, "Registration failed: $errorBody")
+            RegistrationResult(false, errorBody)
         }
-        return RegistrationResponse(true, "Registration successful")
     }
 
-    override suspend fun login(loginRequest: LoginRequest): AuthResponse {
-        val response = authApiService.login(loginRequest)
+    override suspend fun login(login: LoginDomainModel): AuthResult {
+        val request = LoginRequest(login.email, login.password)
+        val response = authApiService.login(request)
         if (!response.isSuccessful) {
             val errorBody = response.errorBody()?.string() ?: "Unknown error"
             throw Exception("Login failed: $errorBody")
         }
-        return response.body() ?: throw Exception("Empty response body")
+        return AuthResult(response.body()?.token ?: throw Exception("Empty token"))
     }
 }

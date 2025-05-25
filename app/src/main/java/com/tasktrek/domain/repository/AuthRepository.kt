@@ -1,11 +1,11 @@
 package com.tasktrek.domain.repository
 
-import com.tasktrek.data.model.request.auth.LoginRequest
-import com.tasktrek.data.model.request.auth.RegisterRequest
-import com.tasktrek.data.model.response.auth.AuthResponse
-import com.tasktrek.data.model.response.auth.RegistrationResponse
+import com.tasktrek.domain.model.AuthResult
+import com.tasktrek.domain.model.LoginDomainModel
+import com.tasktrek.domain.model.RegisterDomainModel
+import com.tasktrek.domain.model.RegistrationResult
 
 interface AuthRepository {
-    suspend fun register(registerRequest: RegisterRequest): RegistrationResponse
-    suspend fun login(loginRequest: LoginRequest): AuthResponse
+    suspend fun register(register: RegisterDomainModel): RegistrationResult
+    suspend fun login(login: LoginDomainModel): AuthResult
 }

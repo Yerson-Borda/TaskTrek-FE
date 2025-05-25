@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TaskTrek</string>
+    <string name="switch_to_login">Switch to Login</string>
+    <string name="switch_to_register">Switch to Register</string>
 </resources>

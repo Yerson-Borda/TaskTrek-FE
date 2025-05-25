@@ -1,15 +1,13 @@
 package com.tasktrek.presentation.ui.screens.auth.view
 
-import android.credentials.GetCredentialException
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
@@ -24,8 +22,9 @@ import com.tasktrek.presentation.ui.components.GoogleSignInButton
 import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthState
 import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
+import com.tasktrek.R
+import io.github.cdimascio.dotenv.dotenv
 
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
@@ -33,28 +32,17 @@ fun AuthScreen(
     onRegistrationSuccess: () -> Unit = {},
     onGoogleSignIn: () -> Unit = {}
 ) {
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isLoginMode by remember { mutableStateOf(true) }
-
     val authState by viewModel.authState.collectAsStateWithLifecycle()
-
-    // LocalContext for getting the context needed for CredentialManager
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(authState) {
         if (authState is AuthState.RegistrationSuccess) {
             onRegistrationSuccess()
-            isLoginMode = true
-            username = ""
-            email = ""
-            password = ""
+            viewModel.resetInputs()
+            viewModel.isLoginMode = true
         }
     }
-
-    // Remember coroutine scope for launching the sign-in task
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -63,10 +51,10 @@ fun AuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        if (!isLoginMode) {
+        if (!viewModel.isLoginMode) {
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
+                value = viewModel.username,
+                onValueChange = { viewModel.username = it },
                 label = { Text("Username") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -74,16 +62,16 @@ fun AuthScreen(
         }
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = viewModel.email,
+            onValueChange = { viewModel.email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = viewModel.password,
+            onValueChange = { viewModel.password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
@@ -91,11 +79,11 @@ fun AuthScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (isLoginMode) {
+        if (viewModel.isLoginMode) {
             GoogleSignInButton(onClick = {
-                val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+                val googleIdOption = GetGoogleIdOption.Builder()
                     .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId("652218564625-vuet4l64jbtjnrq4ckb3b7pceh5vkre3.apps.googleusercontent.com")
+                    .setServerClientId(dotenv()["GOOGLE_SERVER_CLIENT_ID"])
                     .setAutoSelectEnabled(true)
                     .build()
 
@@ -109,34 +97,35 @@ fun AuthScreen(
                     try {
                         val result = credentialManager.getCredential(context, request)
                         handleSignIn(result)
-                    } catch (e: GetCredentialException) {
-                        Log.e("MainActivity", "GetCredentialException", e)
+                    } catch (e: Exception) {
+                        Log.e("AuthScreen", "GetCredentialException", e)
                     }
                 }
-            }) // Trigger the sign-in
+            })
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                if (isLoginMode) {
-                    viewModel.login(email, password)
+                if (viewModel.isLoginMode) {
+                    viewModel.login()
                 } else {
-                    viewModel.register(username, email, password)
+                    viewModel.register()
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(if (isLoginMode) "Login" else "Register")
+            Text(if (viewModel.isLoginMode) "Login" else "Register")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(
-            onClick = { isLoginMode = !isLoginMode }
-        ) {
-            Text(if (isLoginMode) "Switch to Register" else "Switch to Login")
+        TextButton(onClick = { viewModel.isLoginMode = !viewModel.isLoginMode }) {
+            Text(
+                if (viewModel.isLoginMode) stringResource(R.string.switch_to_register)
+                else stringResource(R.string.switch_to_login)
+            )
         }
 
         when (val state = authState) {
@@ -146,7 +135,7 @@ fun AuthScreen(
                 color = MaterialTheme.colorScheme.error
             )
             is AuthState.Success -> Text(
-                text = "Login successful! Token: ${state.authResponse.token}",
+                text = "Login successful! Token: ${state.authResult.token}",
                 color = MaterialTheme.colorScheme.primary
             )
             AuthState.RegistrationSuccess -> Unit
