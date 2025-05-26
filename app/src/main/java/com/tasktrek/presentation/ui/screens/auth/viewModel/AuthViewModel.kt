@@ -5,18 +5,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tasktrek.domain.model.AuthResult
 import com.tasktrek.domain.model.LoginDomainModel
 import com.tasktrek.domain.model.RegisterDomainModel
 import com.tasktrek.domain.usecase.LoginUseCase
 import com.tasktrek.domain.usecase.RegisterUseCase
+import com.tasktrek.presentation.ui.screens.auth.view.AuthState
+import com.tasktrek.utils.TokenManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val registerUseCase: RegisterUseCase,
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     var username by mutableStateOf("")
@@ -48,6 +50,7 @@ class AuthViewModel(
             _authState.value = AuthState.Loading
             try {
                 val result = loginUseCase(LoginDomainModel(email, password))
+                tokenManager.saveToken(result.token)
                 _authState.value = AuthState.Success(result)
             } catch (e: Exception) {
                 _authState.value = AuthState.Error(e.message ?: "Login failed")
@@ -55,19 +58,9 @@ class AuthViewModel(
         }
     }
 
-
     fun resetInputs() {
         username = ""
         email = ""
         password = ""
     }
-}
-
-
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    object RegistrationSuccess : AuthState()  // New state for registration success
-    data class Success(val authResult: AuthResult) : AuthState()
-    data class Error(val message: String) : AuthState()
 }

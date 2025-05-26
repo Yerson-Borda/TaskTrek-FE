@@ -15,7 +15,7 @@ class SplashViewModel : ViewModel() {
     init {
         viewModelScope.launch {
 
-            TODO("Check if user is logged in and load list of tasks and projects")
+//            TODO("Check if user is logged in and load list of tasks and projects")
 
             delay(2000)
             _isLoadingDone.value = true

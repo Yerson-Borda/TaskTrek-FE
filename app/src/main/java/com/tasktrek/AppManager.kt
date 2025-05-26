@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.tasktrek.presentation.ui.screens.auth.view.AuthScreen
+import com.tasktrek.presentation.ui.screens.home.view.HomeScreen
 import kotlinx.serialization.Serializable
 import com.tasktrek.presentation.ui.screens.splash.view.SplashScreen
 
@@ -48,7 +49,7 @@ fun AppManager() {
         }
 
         composable<HomeScreenRoute> {
-
+            HomeScreen()
         }
     }
 }

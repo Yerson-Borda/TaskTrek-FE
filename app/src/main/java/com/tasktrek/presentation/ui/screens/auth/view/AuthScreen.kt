@@ -20,7 +20,6 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.tasktrek.BuildConfig
 import com.tasktrek.presentation.ui.components.GoogleSignInButton
-import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthState
 import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthViewModel
 import kotlinx.coroutines.launch
 import com.tasktrek.R
