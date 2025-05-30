@@ -1,7 +1,7 @@
 package com.tasktrek.data.repository
 
-import com.tasktrek.data.model.request.auth.LoginRequest
-import com.tasktrek.data.model.request.auth.RegisterRequest
+import com.tasktrek.data.mapper.toDomain
+import com.tasktrek.data.mapper.toRequest
 import com.tasktrek.domain.model.AuthResult
 import com.tasktrek.domain.model.LoginDomainModel
 import com.tasktrek.domain.model.RegisterDomainModel
@@ -13,23 +13,23 @@ class AuthRepositoryImpl(
     private val authApiService: AuthApiService
 ) : AuthRepository {
     override suspend fun register(register: RegisterDomainModel): RegistrationResult {
-        val request = RegisterRequest(register.username, register.email, register.password)
+        val request = register.toRequest()
         val response = authApiService.register(request)
-        return if (response.isSuccessful) {
-            RegistrationResult(true, "Registration successful")
-        } else {
+
+        if (!response.isSuccessful) {
             val errorBody = response.errorBody()?.string() ?: "Unknown error"
-            RegistrationResult(false, errorBody)
+            return RegistrationResult(success = false, message = errorBody)
         }
+
+        return response.body()?.toDomain() ?: RegistrationResult(false, "Empty response")
     }
 
     override suspend fun login(login: LoginDomainModel): AuthResult {
-        val request = LoginRequest(login.email, login.password)
+        val request = login.toRequest()
         val response = authApiService.login(request)
         if (!response.isSuccessful) {
             val errorBody = response.errorBody()?.string() ?: "Unknown error"
             throw Exception("Login failed: $errorBody")
         }
-        return AuthResult(response.body()?.token ?: throw Exception("Empty token"))
-    }
+        return response.body()?.toDomain() ?: throw Exception("Empty token")    }
 }
