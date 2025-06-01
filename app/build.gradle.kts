@@ -1,7 +1,11 @@
+import org.gradle.kotlin.dsl.implementation
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -10,12 +14,17 @@ android {
 
     defaultConfig {
         applicationId = "com.tasktrek"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val properties =  Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        buildConfigField ("String", "GOOGLE_SERVER_CLIENT_ID", "\"${properties.getProperty("GOOGLE_SERVER_CLIENT_ID")}\"")
     }
 
     buildTypes {
@@ -36,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -56,4 +66,44 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.adapter.rxjava2)
+    implementation (libs.converter.gson)
+
+    // okhttp
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
+
+    // Koin for di
+    implementation (libs.koin.androidx.compose)
+    implementation (libs.koin.androidx.compose.navigation)
+
+    // Coroutines for asynchronous calls (and Deferred adapter)
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
+
+    // lifecycle
+    implementation (libs.androidx.lifecycle.extensions)
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+    implementation (libs.androidx.lifecycle.runtime.ktx.v220)
+
+    //recyclerview and cardview
+    implementation (libs.androidx.recyclerview)
+    implementation (libs.androidx.cardview)
+
+    //Google OAuth
+    implementation (libs.androidx.credentials)
+    implementation (libs.androidx.credentials.play.services.auth)
+    implementation (libs.googleid)
+
+    // Navigation compose
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
+    // UI
+    implementation(libs.accompanist.systemuicontroller)
+    implementation (libs.androidx.material.icons.extended)
 }

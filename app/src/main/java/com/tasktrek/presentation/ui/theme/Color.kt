@@ -1,4 +1,4 @@
-package com.tasktrek.ui.theme
+package com.tasktrek.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
