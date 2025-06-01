@@ -102,4 +102,8 @@ dependencies {
     // Navigation compose
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    // UI
+    implementation(libs.accompanist.systemuicontroller)
+    implementation (libs.androidx.material.icons.extended)
 }
