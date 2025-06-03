@@ -42,13 +42,15 @@ object RetrofitInstance {
         return ServiceContainer(
             authApiService = retrofit.create(AuthApiService::class.java),
             taskApiService = retrofit.create(TaskApiService::class.java),
-            projectApiService = retrofit.create(ProjectApiService::class.java)
+            projectApiService = retrofit.create(ProjectApiService::class.java),
+            profileApiService = retrofit.create(ProfileApiService::class.java)
         )
     }
 
     data class ServiceContainer(
         val authApiService: AuthApiService,
         val taskApiService: TaskApiService,
-        val projectApiService: ProjectApiService
+        val projectApiService: ProjectApiService,
+        val profileApiService: ProfileApiService
     )
 }

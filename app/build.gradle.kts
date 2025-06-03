@@ -106,4 +106,5 @@ dependencies {
     // UI
     implementation(libs.accompanist.systemuicontroller)
     implementation (libs.androidx.material.icons.extended)
+    implementation(libs.coil.compose)
 }

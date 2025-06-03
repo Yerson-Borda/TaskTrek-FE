@@ -3,11 +3,14 @@ package com.tasktrek.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.tasktrek.data.repository.AuthRepositoryImpl
+import com.tasktrek.data.repository.ProfileRepositoryImpl
 import com.tasktrek.data.repository.ProjectRepositoryImpl
 import com.tasktrek.data.repository.TaskRepositoryImpl
 import com.tasktrek.domain.repository.AuthRepository
+import com.tasktrek.domain.repository.ProfileRepository
 import com.tasktrek.domain.repository.ProjectRepository
 import com.tasktrek.domain.repository.TaskRepository
+import com.tasktrek.domain.usecase.GetProfileUseCase
 import com.tasktrek.domain.usecase.LoginUseCase
 import com.tasktrek.domain.usecase.ProjectUseCase
 import com.tasktrek.domain.usecase.RegisterUseCase
@@ -42,6 +45,9 @@ val appModule = module {
     single { ProjectUseCase(get()) }
 
     // Home
-    factory { HomeViewModel(get(), get()) }
-}
+    factory { HomeViewModel(get(), get(), get()) }
 
+    // Profile
+    single<ProfileRepository> { ProfileRepositoryImpl(get<RetrofitInstance.ServiceContainer>().profileApiService) }
+    single { GetProfileUseCase(get()) }
+}

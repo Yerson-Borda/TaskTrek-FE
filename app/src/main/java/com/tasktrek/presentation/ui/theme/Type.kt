@@ -39,6 +39,13 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.sp
     ),
+    titleSmall = TextStyle(
+        fontFamily = interFontFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.sp
+    ),
     labelSmall = TextStyle(
         fontFamily = interFontFamily,
         fontWeight = FontWeight.Medium,
@@ -52,6 +59,13 @@ val Typography = Typography(
         fontSize = 14.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = interFontFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.sp
     ),
     /* Other default text styles to override
     titleLarge = TextStyle(

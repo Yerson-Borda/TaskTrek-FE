@@ -3,23 +3,29 @@ package com.tasktrek.presentation.ui.screens.home.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -28,75 +34,161 @@ import androidx.compose.ui.unit.dp
 import com.tasktrek.presentation.ui.screens.home.viewModel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import com.tasktrek.presentation.ui.screens.home.components.NetworkImage
+import com.tasktrek.presentation.ui.screens.home.components.ProjectCard
+import com.tasktrek.presentation.ui.screens.home.components.TaskCard
+import com.tasktrek.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier
-) {
-
+fun HomeScreen(modifier: Modifier = Modifier) {
     val viewModel: HomeViewModel = koinViewModel()
-
     val uiState by viewModel.uiState.collectAsState()
 
-    when {
-        uiState.isLoading -> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+    if (uiState.isLoading) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
         }
-        uiState.errorMessage != null -> {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Error: ${uiState.errorMessage}", color = MaterialTheme.colorScheme.error)
-            }
-        }
-        else -> {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                Text("Projects", style = MaterialTheme.typography.headlineSmall)
+        return
+    }
 
-                LazyRow(
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+    if (uiState.errorMessage != null) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Error: ${uiState.errorMessage}", color = MaterialTheme.colorScheme.error)
+        }
+        return
+    }
+
+    val searchQuery = uiState.searchQuery
+    val filteredProjects = uiState.projects.filter {
+        it.title.contains(searchQuery, ignoreCase = true)
+    }
+    val filteredTasks = uiState.tasks.filter {
+        it.title.contains(searchQuery, ignoreCase = true)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 16.dp, end = 16.dp, top = 58.dp)
+    ) {
+        // Top Bar
+        uiState.user?.let { user ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    items(uiState.projects) { project ->
-                        Card(
-                            modifier = Modifier
-                                .width(200.dp)
-                                .height(120.dp),
-                            elevation = CardDefaults.cardElevation()
-                        ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
-                                Text(project.title, style = MaterialTheme.typography.titleMedium)
-                                Spacer(Modifier.height(4.dp))
-                                Text("Ends: ${project.endDate}", style = MaterialTheme.typography.bodySmall)
-                                Text("${project.completedTasks}/${project.tasksToComplete} tasks done")
-                            }
-                        }
+                    NetworkImage(
+                        imageUrl = user.profileImage,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        "Hello,\n${user.username}",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+                Row(
+//                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { /* future click */ }) {
+                        Icon(
+                            painter = painterResource(R.drawable.calendar_icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* future click */ }) {
+                        Icon(
+                            painter = painterResource(R.drawable.achievements_icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* future click */ }) {
+                        Icon(
+                            painter = painterResource(R.drawable.stats_icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* future click */ }) {
+                        Icon(
+                            painter = painterResource(R.drawable.notification_icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
+            }
+        }
 
-                Spacer(modifier = Modifier.height(16.dp))
+        // Search Bar
+        var active by remember { mutableStateOf(false) }
+        SearchBar(
+            query = searchQuery,
+            onQueryChange = { viewModel.updateSearchQuery(it) },
+            onSearch = { active = false },
+            active = active,
+            onActiveChange = { active = it },
+            placeholder = { Text("Search") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(40.dp),
+            leadingIcon = {
+                Icon(Icons.Default.Search, contentDescription = null)
+            }
+        ) {}
+        Spacer(Modifier.height(20.dp))
 
-                Text("Tasks", style = MaterialTheme.typography.headlineSmall)
+        // Projects Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Recent Projects", style = MaterialTheme.typography.headlineSmall)
+            TextButton(onClick = { }) {
+                Text("See All", color = Color(0xFF5F33E1), fontWeight = FontWeight.Bold)
+            }
+        }
 
-                LazyColumn(
-                    contentPadding = PaddingValues(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(uiState.tasks) { task ->
-                        Card(modifier = Modifier.fillMaxWidth()) {
-                            Row(
-                                modifier = Modifier.padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Column {
-                                    Text(task.title, style = MaterialTheme.typography.titleMedium)
-                                    Text("Due: ${task.endDate}", style = MaterialTheme.typography.bodySmall)
-                                }
-                                Checkbox(checked = task.complete, onCheckedChange = null)
-                            }
-                        }
-                    }
-                }
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            items(filteredProjects) { project ->
+                ProjectCard(project)
+            }
+        }
+
+        Spacer(Modifier.height(25.dp))
+
+        // Tasks Header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Tasks", style = MaterialTheme.typography.headlineSmall)
+            TextButton(onClick = { }) {
+                Text("See All", color = Color(0xFF5F33E1), fontWeight = FontWeight.Bold)
+            }
+        }
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            items(filteredTasks) { task ->
+                TaskCard(task)
             }
         }
     }
