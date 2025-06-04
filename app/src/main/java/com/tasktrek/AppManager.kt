@@ -1,19 +1,27 @@
 package com.tasktrek
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.tasktrek.presentation.ui.screens.auth.view.AuthScreen
 import com.tasktrek.presentation.ui.screens.home.view.HomeScreen
 import kotlinx.serialization.Serializable
 import com.tasktrek.presentation.ui.screens.splash.view.SplashScreen
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import com.tasktrek.presentation.ui.screens.common.FloatingBottomBar
+import com.tasktrek.presentation.ui.screens.files.view.FilesScreen
 
 @Composable
 fun AppManager() {
-    val context = LocalContext.current
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination?.route
+
     NavHost(
         navController = navController,
         startDestination = SplashScreenRoute
@@ -28,9 +36,9 @@ fun AppManager() {
         composable<AuthScreenRoute> {
             AuthScreen(
                 onRegistrationSuccess = {
-
-                    TODO("Something must go here...")
-
+                    navController.navigate(HomeScreenRoute) {
+                        popUpTo(AuthScreenRoute) { inclusive = true }
+                    }
                 },
                 onLoginSuccess = {
                     navController.navigate(HomeScreenRoute) {
@@ -38,21 +46,43 @@ fun AppManager() {
                     }
                 },
                 onGoogleSignIn = {
-
-                    TODO("Handle response and google services")
-
                     navController.navigate(HomeScreenRoute) {
                         popUpTo(AuthScreenRoute) { inclusive = true }
                     }
                 }
             )
         }
-
         composable<HomeScreenRoute> {
-            HomeScreen()
+            Scaffold(
+                bottomBar = {
+                    FloatingBottomBar(
+                        onHomeClick = { navController.navigate(HomeScreenRoute) },
+                        onAddClick = { /* TODO: Open add options dialog */ },
+                        onFilesClick = { navController.navigate(FilesScreenRoute) },
+                        currentDestination = currentDestination ?: ""
+                    )
+                }
+            ) { paddingValues ->
+                HomeScreen(modifier = Modifier.padding(paddingValues))
+            }
+        }
+        composable<FilesScreenRoute> {
+            Scaffold(
+                bottomBar = {
+                    FloatingBottomBar(
+                        onHomeClick = { navController.navigate(HomeScreenRoute) },
+                        onAddClick = { /* TODO: Open add options dialog */ },
+                        onFilesClick = { navController.navigate(FilesScreenRoute) },
+                        currentDestination = currentDestination ?: ""
+                    )
+                }
+            ) { paddingValues ->
+                FilesScreen(modifier = Modifier.padding(paddingValues))
+            }
         }
     }
 }
+
 
 @Serializable
 object SplashScreenRoute
@@ -62,3 +92,6 @@ object AuthScreenRoute
 
 @Serializable
 object HomeScreenRoute
+
+@Serializable
+object FilesScreenRoute
