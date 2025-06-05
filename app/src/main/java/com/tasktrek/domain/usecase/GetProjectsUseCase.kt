@@ -3,7 +3,7 @@ package com.tasktrek.domain.usecase
 import com.tasktrek.domain.model.ProjectListItemResult
 import com.tasktrek.domain.repository.ProjectRepository
 
-class ProjectUseCase (
+class GetProjectsUseCase (
     private val projectRepository: ProjectRepository
 ) {
     suspend operator fun invoke(): List<ProjectListItemResult> {

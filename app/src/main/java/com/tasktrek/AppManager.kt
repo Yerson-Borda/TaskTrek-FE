@@ -12,9 +12,13 @@ import com.tasktrek.presentation.ui.screens.home.view.HomeScreen
 import kotlinx.serialization.Serializable
 import com.tasktrek.presentation.ui.screens.splash.view.SplashScreen
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.tasktrek.presentation.ui.screens.common.FloatingBottomBar
 import com.tasktrek.presentation.ui.screens.files.view.FilesScreen
+import com.tasktrek.presentation.ui.screens.task_creation.view.TaskCreationScreen
 
 @Composable
 fun AppManager() {
@@ -53,36 +57,50 @@ fun AppManager() {
             )
         }
         composable<HomeScreenRoute> {
+            var showFloatingMenu by remember { mutableStateOf(false) }
+
             Scaffold(
                 bottomBar = {
                     FloatingBottomBar(
                         onHomeClick = { navController.navigate(HomeScreenRoute) },
-                        onAddClick = { /* TODO: Open add options dialog */ },
+                        onAddClick = { showFloatingMenu = !showFloatingMenu },
                         onFilesClick = { navController.navigate(FilesScreenRoute) },
                         currentDestination = currentDestination ?: ""
                     )
                 }
             ) { paddingValues ->
-                HomeScreen(modifier = Modifier.padding(paddingValues))
+                HomeScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    showFloatingMenu = showFloatingMenu,
+                    onDismissFloatingMenu = { showFloatingMenu = false },
+                    onCreateTask = { navController.navigate(TaskCreationScreenRoute) }
+                )
             }
         }
         composable<FilesScreenRoute> {
+            var showFloatingMenu by remember { mutableStateOf(false) }
             Scaffold(
                 bottomBar = {
                     FloatingBottomBar(
                         onHomeClick = { navController.navigate(HomeScreenRoute) },
-                        onAddClick = { /* TODO: Open add options dialog */ },
+                        onAddClick = { showFloatingMenu = !showFloatingMenu },
                         onFilesClick = { navController.navigate(FilesScreenRoute) },
                         currentDestination = currentDestination ?: ""
                     )
                 }
             ) { paddingValues ->
-                FilesScreen(modifier = Modifier.padding(paddingValues))
+                FilesScreen(
+                    modifier = Modifier.padding(paddingValues),
+                    showFloatingMenu = showFloatingMenu,
+                    onDismissFloatingMenu = { showFloatingMenu = false }
+                )
             }
+        }
+        composable<TaskCreationScreenRoute> {
+            TaskCreationScreen()
         }
     }
 }
-
 
 @Serializable
 object SplashScreenRoute
@@ -95,3 +113,6 @@ object HomeScreenRoute
 
 @Serializable
 object FilesScreenRoute
+
+@Serializable
+object TaskCreationScreenRoute

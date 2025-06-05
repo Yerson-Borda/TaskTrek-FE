@@ -1,4 +1,4 @@
-package com.tasktrek.presentation.ui.screens.files.view
+package com.tasktrek.presentation.ui.screens.task.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,16 +10,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun FilesScreen(
-    modifier: Modifier = Modifier,
-    showFloatingMenu: Boolean,
-    onDismissFloatingMenu: () -> Unit
+fun TaskScreen(
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
+    Column (
+        modifier = Modifier
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Files Screen")
+        Text("Task Screen")
     }
+}
+
+@Preview
+@Composable
+fun TaskScreenPreview() {
+    TaskScreen()
 }

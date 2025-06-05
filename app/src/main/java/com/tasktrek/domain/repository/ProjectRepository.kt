@@ -1,7 +1,14 @@
 package com.tasktrek.domain.repository
 
+import com.tasktrek.domain.model.CreateProjectDomainModel
+import com.tasktrek.domain.model.JoinProjectDomainModel
 import com.tasktrek.domain.model.ProjectListItemResult
+import com.tasktrek.domain.model.ProjectResult
 
 interface ProjectRepository {
     suspend fun getProjects(): List<ProjectListItemResult>
+
+    suspend fun createProject(createProject: CreateProjectDomainModel): ProjectResult
+
+    suspend fun joinProject(joinProject: JoinProjectDomainModel): Boolean
 }

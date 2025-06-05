@@ -2,18 +2,25 @@ package com.tasktrek.presentation.ui.screens.home.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tasktrek.domain.model.CreateProjectDomainModel
+import com.tasktrek.domain.model.JoinProjectDomainModel
+import com.tasktrek.domain.usecase.CreateProjectUseCase
 import com.tasktrek.domain.usecase.GetProfileUseCase
-import com.tasktrek.domain.usecase.ProjectUseCase
-import com.tasktrek.domain.usecase.TaskUseCase
+import com.tasktrek.domain.usecase.GetProjectsUseCase
+import com.tasktrek.domain.usecase.GetTasksUseCase
+import com.tasktrek.domain.usecase.JoinProjectUseCase
 import com.tasktrek.presentation.ui.screens.home.view.HomeUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 class HomeViewModel(
-    private val taskUseCase: TaskUseCase,
-    private val projectUseCase: ProjectUseCase,
-    private val getProfileUseCase: GetProfileUseCase
+    private val taskUseCase: GetTasksUseCase,
+    private val projectUseCase: GetProjectsUseCase,
+    private val getProfileUseCase: GetProfileUseCase,
+    private val createProjectUseCase: CreateProjectUseCase,
+    private val joinProjectUseCase: JoinProjectUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState(isLoading = true))
@@ -48,5 +55,34 @@ class HomeViewModel(
             }
         }
     }
-}
 
+    fun createProject(title: String, deadline: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val parsedDate = LocalDateTime.parse(deadline)
+                val model = CreateProjectDomainModel(
+                    title = title,
+                    endDate = parsedDate
+                )
+                createProjectUseCase(model)
+                fetchData()
+                onComplete()
+            } catch (_: Exception) {
+                throw Exception("Invalid date format")
+            }
+        }
+    }
+
+    fun joinProject(code: String, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                val model = JoinProjectDomainModel(code = code)
+                joinProjectUseCase(model)
+                fetchData()
+                onComplete()
+            } catch (_: Exception) {
+                throw Exception("Invalid code")
+            }
+        }
+    }
+}
