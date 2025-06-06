@@ -4,6 +4,7 @@ import com.tasktrek.data.mapper.toDomain
 import com.tasktrek.data.mapper.toRequest
 import com.tasktrek.domain.model.CreateProjectDomainModel
 import com.tasktrek.domain.model.JoinProjectDomainModel
+import com.tasktrek.domain.model.JoinProjectResult
 import com.tasktrek.domain.model.ProjectListItemResult
 import com.tasktrek.domain.model.ProjectResult
 import com.tasktrek.domain.repository.ProjectRepository
@@ -22,7 +23,7 @@ class ProjectRepositoryImpl(
         return response.toDomain()
     }
 
-    override suspend fun joinProject(joinProject: JoinProjectDomainModel): Boolean {
-        return projectApiService.joinProject(joinProject.toRequest())
+    override suspend fun joinProject(joinProject: JoinProjectDomainModel): JoinProjectResult {
+        return projectApiService.joinProject(joinProject.toRequest()).toDomain()
     }
 }

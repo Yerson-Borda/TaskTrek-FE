@@ -76,13 +76,21 @@ class HomeViewModel(
     fun joinProject(code: String, onComplete: () -> Unit) {
         viewModelScope.launch {
             try {
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
                 val model = JoinProjectDomainModel(code = code)
                 joinProjectUseCase(model)
                 fetchData()
                 onComplete()
-            } catch (_: Exception) {
-                throw Exception("Invalid code")
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = e.message ?: "Failed to join project"
+                )
             }
         }
+    }
+
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ fun JoinProjectSheet(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     var code by remember { mutableStateOf("") }
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier.padding(16.dp),
@@ -58,7 +60,7 @@ fun JoinProjectSheet(
                 .fillMaxWidth(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = Color.Transparent,
@@ -69,11 +71,23 @@ fun JoinProjectSheet(
             )
         )
 
+        Spacer(Modifier.height(8.dp))
+
+        uiState.errorMessage?.let { error ->
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
         Spacer(Modifier.height(16.dp))
 
         Button(
             onClick = {
                 viewModel.joinProject(code) {
+                    viewModel.clearError()
                     onDone()
                 }
             },
@@ -85,9 +99,7 @@ fun JoinProjectSheet(
                 contentColor = Color.White
             )
         ) {
-            Text(
-                text = "Join"
-            )
+            Text("Join")
         }
     }
 }
