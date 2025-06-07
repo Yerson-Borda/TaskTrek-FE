@@ -2,6 +2,7 @@ package com.tasktrek.presentation.ui.screens.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,11 +32,12 @@ import com.tasktrek.domain.model.ProjectListItemResult
 import com.tasktrek.presentation.ui.theme.interFontFamily
 
 @Composable
-fun ProjectCard(project: ProjectListItemResult) {
+fun ProjectCard(project: ProjectListItemResult, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .width(260.dp)
-            .height(160.dp),
+            .height(160.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {

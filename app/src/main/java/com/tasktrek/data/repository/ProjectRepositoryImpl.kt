@@ -18,6 +18,10 @@ class ProjectRepositoryImpl(
         return projectApiService.getProjects().map { it.toDomain() }
     }
 
+    override suspend fun getProjectById(projectId: String): ProjectResult {
+        return projectApiService.getProjectById(projectId).toDomain()
+    }
+
     override suspend fun createProject(createProject: CreateProjectDomainModel): ProjectResult {
         val response = projectApiService.createProject(createProject.toRequest())
         return response.toDomain()

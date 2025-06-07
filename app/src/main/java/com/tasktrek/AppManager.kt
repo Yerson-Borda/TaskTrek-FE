@@ -16,9 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.tasktrek.presentation.ui.screens.common.FloatingBottomBar
 import com.tasktrek.presentation.ui.screens.files.view.FilesScreen
+import com.tasktrek.presentation.ui.screens.project.view.ProjectScreen
 import com.tasktrek.presentation.ui.screens.task_creation.view.TaskCreationScreen
+import java.util.UUID
 
 @Composable
 fun AppManager() {
@@ -73,7 +77,13 @@ fun AppManager() {
                     modifier = Modifier.padding(paddingValues),
                     showFloatingMenu = showFloatingMenu,
                     onDismissFloatingMenu = { showFloatingMenu = false },
-                    onCreateTask = { navController.navigate(TaskCreationScreenRoute) }
+                    onCreateTask = { navController.navigate(TaskCreationScreenRoute) },
+                    onProjectClick = { projectId ->
+                        navController.navigate("$ProjectScreenRoute/$projectId")
+                    },
+                    onProjectCreated = { projectId ->
+                        navController.navigate("$ProjectScreenRoute/$projectId")
+                    }
                 )
             }
         }
@@ -99,6 +109,13 @@ fun AppManager() {
         composable<TaskCreationScreenRoute> {
             TaskCreationScreen()
         }
+        composable(
+            route = "$ProjectScreenRoute/{projectId}",
+            arguments = listOf(navArgument("projectId") { type = NavType.StringType })
+        ) {
+            val projectId = UUID.fromString(it.arguments?.getString("projectId")!!)
+            ProjectScreen(projectId = projectId)
+        }
     }
 }
 
@@ -116,3 +133,6 @@ object FilesScreenRoute
 
 @Serializable
 object TaskCreationScreenRoute
+
+@Serializable
+object ProjectScreenRoute

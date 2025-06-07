@@ -12,6 +12,7 @@ import com.tasktrek.domain.repository.ProjectRepository
 import com.tasktrek.domain.repository.TaskRepository
 import com.tasktrek.domain.usecase.CreateProjectUseCase
 import com.tasktrek.domain.usecase.GetProfileUseCase
+import com.tasktrek.domain.usecase.GetProjectByIdUseCase
 import com.tasktrek.domain.usecase.LoginUseCase
 import com.tasktrek.domain.usecase.GetProjectsUseCase
 import com.tasktrek.domain.usecase.RegisterUseCase
@@ -20,6 +21,7 @@ import com.tasktrek.domain.usecase.JoinProjectUseCase
 import com.tasktrek.network.RetrofitInstance
 import com.tasktrek.presentation.ui.screens.auth.viewModel.AuthViewModel
 import com.tasktrek.presentation.ui.screens.home.viewModel.HomeViewModel
+import com.tasktrek.presentation.ui.screens.project.viewModel.ProjectViewModel
 import com.tasktrek.utils.TokenManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -48,6 +50,9 @@ val appModule = module {
     single { CreateProjectUseCase(get()) }
     single { JoinProjectUseCase(get()) }
     single { GetProjectsUseCase(get()) }
+    single { GetProjectByIdUseCase(get()) }
+
+    factory { ProjectViewModel(get()) }
 
     // Home
     factory { HomeViewModel(get(), get(), get(), get(), get()) }

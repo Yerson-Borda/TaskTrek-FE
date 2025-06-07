@@ -51,6 +51,7 @@ import com.tasktrek.presentation.ui.screens.common.AddProjectSheet
 import com.tasktrek.presentation.ui.screens.common.FloatingActionMenu
 import com.tasktrek.presentation.ui.screens.common.JoinProjectSheet
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +59,9 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     showFloatingMenu: Boolean,
     onDismissFloatingMenu: () -> Unit,
-    onCreateTask: () -> Unit
+    onCreateTask: () -> Unit,
+    onProjectClick: (UUID) -> Unit,
+    onProjectCreated: (UUID) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val sheetState = rememberBottomSheetScaffoldState(
@@ -76,6 +79,7 @@ fun HomeScreen(
             when (currentSheet) {
                 SheetType.AddProject -> AddProjectSheet(onDone = {
                     scope.launch { sheetState.bottomSheetState.hide() }
+                    onProjectCreated(it)
                 })
 
                 SheetType.JoinProject -> JoinProjectSheet(onDone = {
@@ -211,7 +215,7 @@ fun HomeScreen(
 
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(filteredProjects) { project ->
-                        ProjectCard(project)
+                        ProjectCard(project = project, onClick = { onProjectClick(project.id)})
                     }
                 }
 

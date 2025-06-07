@@ -31,10 +31,11 @@ import com.tasktrek.utils.DateTimePickerDialog
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 @Composable
 fun AddProjectSheet(
-    onDone: () -> Unit,
+    onDone: (UUID) -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     var title by remember { mutableStateOf("") }

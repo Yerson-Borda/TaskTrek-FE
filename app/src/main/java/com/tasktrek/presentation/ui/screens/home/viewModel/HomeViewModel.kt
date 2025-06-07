@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 
 class HomeViewModel(
     private val taskUseCase: GetTasksUseCase,
@@ -56,22 +57,20 @@ class HomeViewModel(
         }
     }
 
-    fun createProject(title: String, deadline: String, onComplete: () -> Unit) {
+    fun createProject(title: String, deadline: String, onComplete: (UUID) -> Unit) {
         viewModelScope.launch {
             try {
                 val parsedDate = LocalDateTime.parse(deadline)
-                val model = CreateProjectDomainModel(
-                    title = title,
-                    endDate = parsedDate
-                )
-                createProjectUseCase(model)
+                val model = CreateProjectDomainModel(title = title, endDate = parsedDate)
+                val createdProject = createProjectUseCase(model)
                 fetchData()
-                onComplete()
+                onComplete(createdProject.id)
             } catch (_: Exception) {
                 throw Exception("Invalid date format")
             }
         }
     }
+
 
     fun joinProject(code: String, onComplete: () -> Unit) {
         viewModelScope.launch {
