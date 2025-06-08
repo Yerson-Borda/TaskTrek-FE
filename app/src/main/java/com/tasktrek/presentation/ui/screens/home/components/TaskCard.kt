@@ -1,5 +1,6 @@
 package com.tasktrek.presentation.ui.screens.home.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,11 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tasktrek.domain.model.TaskListItemResult
 import com.tasktrek.presentation.ui.theme.interFontFamily
+import java.util.UUID
 
 @Composable
-fun TaskCard(task: TaskListItemResult) {
+fun TaskCard(task: TaskListItemResult, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Row(

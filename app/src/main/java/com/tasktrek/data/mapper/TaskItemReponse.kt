@@ -4,6 +4,7 @@ import com.tasktrek.data.model.response.task.TaskListItemResponse
 import com.tasktrek.domain.model.TaskListItemResult
 
 fun TaskListItemResponse.toDomain() = TaskListItemResult(
+    id = id,
     title = title,
     endDate = endDate,
     complete = complete

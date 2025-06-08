@@ -61,6 +61,7 @@ fun HomeScreen(
     onDismissFloatingMenu: () -> Unit,
     onCreateTask: () -> Unit,
     onProjectClick: (UUID) -> Unit,
+    onTaskClick: (UUID) -> Unit,
     onProjectCreated: (UUID) -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -235,7 +236,7 @@ fun HomeScreen(
 
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(filteredTasks) { task ->
-                        TaskCard(task)
+                        TaskCard(task, onClick = { onTaskClick(task.id) })
                     }
                 }
             }

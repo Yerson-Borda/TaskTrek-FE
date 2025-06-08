@@ -21,6 +21,7 @@ import androidx.navigation.navArgument
 import com.tasktrek.presentation.ui.screens.common.FloatingBottomBar
 import com.tasktrek.presentation.ui.screens.files.view.FilesScreen
 import com.tasktrek.presentation.ui.screens.project.view.ProjectScreen
+import com.tasktrek.presentation.ui.screens.task.view.TaskScreen
 import com.tasktrek.presentation.ui.screens.task_creation.view.TaskCreationScreen
 import java.util.UUID
 
@@ -83,6 +84,9 @@ fun AppManager() {
                     },
                     onProjectCreated = { projectId ->
                         navController.navigate("$ProjectScreenRoute/$projectId")
+                    },
+                    onTaskClick = { taskId ->
+                        navController.navigate("$TaskScreenRoute/$taskId")
                     }
                 )
             }
@@ -107,14 +111,28 @@ fun AppManager() {
             }
         }
         composable<TaskCreationScreenRoute> {
-            TaskCreationScreen()
+            TaskCreationScreen(
+                onTaskCreated = { taskId ->
+                    navController.navigate("${TaskScreenRoute}/$taskId") {
+                        popUpTo(TaskCreationScreenRoute) { inclusive = true }
+                    }
+                }
+            )
         }
+
         composable(
             route = "$ProjectScreenRoute/{projectId}",
             arguments = listOf(navArgument("projectId") { type = NavType.StringType })
         ) {
             val projectId = UUID.fromString(it.arguments?.getString("projectId")!!)
             ProjectScreen(projectId = projectId)
+        }
+        composable(
+            route = "$TaskScreenRoute/{taskId}",
+            arguments = listOf(navArgument("taskId") { type = NavType.StringType })
+        ) {
+            val taskId = UUID.fromString(it.arguments?.getString("taskId")!!)
+            TaskScreen(taskId = taskId)
         }
     }
 }
@@ -133,6 +151,9 @@ object FilesScreenRoute
 
 @Serializable
 object TaskCreationScreenRoute
+
+@Serializable
+object TaskScreenRoute
 
 @Serializable
 object ProjectScreenRoute
